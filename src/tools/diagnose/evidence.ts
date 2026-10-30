@@ -5,6 +5,7 @@ import { logger } from '../../core/logger.ts';
 import { artistRefusal, filmOrSeriesMatch, isFilmOrSeries, type FilmOrSeries } from '../../core/resolver.ts';
 import { unfenced } from '../../core/titleMatch.ts';
 import {
+    hasCleanup,
     hasCleanuparr,
     hasHistory,
     hasIndexers,
@@ -335,6 +336,14 @@ export async function collectEvidence(deps: DiagnoseDeps, target: DiagnoseTarget
         }
     }
 
+    // null: no cleanup service, or no TMDB id to find the title by. undefined: could not look.
+    let cleanup: Evidence['cleanup'] = null;
+    const cleanupAdapter = deps.adapters.find(hasCleanup);
+    const tmdb = item?.ids.tmdb;
+    if (cleanupAdapter !== undefined && item !== undefined && tmdb !== undefined) {
+        cleanup = await probe(cleanupAdapter.id, degraded, () => cleanupAdapter.readCleanupStatus(item.kind, tmdb));
+    }
+
     degraded.sort();
     libraryDegraded.sort();
     return {
@@ -349,6 +358,7 @@ export async function collectEvidence(deps: DiagnoseDeps, target: DiagnoseTarget
         ...(mediaServer === undefined ? {} : { mediaServer }),
         scanCapable: scanAdapter !== undefined,
         cleanuparr,
+        cleanup,
         libraryDegraded,
         degraded
     };
