@@ -16,6 +16,7 @@ import { chooseOne, freeSpace, FOLDER_MATCH, PROFILE_MATCH, TAG_MATCH } from './
 import { arrSubject } from './crossChecks.ts';
 import { NO_ALBUMS_PROFILE, SEARCH_AFTER_REFRESH } from './lidarrProfiles.ts';
 import { registerWriteTool, type WriteContext, type WritePlan } from './write.ts';
+import { titled } from '../core/labels.ts';
 
 /**
  * The last of the writes, and the only one that has to *choose*
@@ -368,7 +369,7 @@ export function registerAddMedia(server: McpServer, context: WriteContext, adapt
                 hasMetadataProfiles(adapter) ? adapter.listMetadataProfiles() : Promise.resolve(undefined)
             ]);
 
-            const label = `${candidate.title}${candidate.year === undefined ? '' : ` (${candidate.year})`}`;
+            const label = titled(candidate.title, candidate.year);
 
             // Already there is a no-op, not a failure — and adding again would
             // be a duplicate entry rather than a second copy of the film.

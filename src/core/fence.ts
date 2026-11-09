@@ -121,6 +121,12 @@ export function fenceText(value: string, source: { service: string; field: strin
 
 const FENCED = /<<untrusted:[^>]*>>([\s\S]*?)<<\/>>/g;
 
+/** `fenceText` with the service fixed, for an adapter or helper that fences many fields. */
+export const fencer =
+    (service: string) =>
+    (value: string, field: string): string =>
+        fenceText(value, { service, field });
+
 /**
  * The value as its service said it, for a person reading the web UI. The fence
  * tells a model which words are data, and to anyone else it is noise in the
