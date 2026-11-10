@@ -112,14 +112,14 @@ describe('stack_health primary media server', () => {
                 fakeArr({ diagnosis: healthy, getFailedHealthChecks: async () => [check(1), check(2), check(3)], getDiskSpace: async () => [disk('/a', 1), disk('/b', 2), disk('/c', 3), disk('/d', 4)] })
             ];
             const text = await textOf(undefined, adapters, { detail: 'standard', limit: 5 });
-            expect(text.split('\n')[0]).toBe('All 1 configured service(s) healthy. 3 failing health check(s), 2 of 4 disk(s) shown.');
+            expect(text.split('\n')[0]).toBe('All 1 configured service(s) healthy. 3 failing health check(s), 2 of 4 mount(s) shown.');
             expect(text.split('\n').filter(l => l.startsWith('disk'))).toHaveLength(2);
         });
 
         it('says so when the checks spend the whole limit and no disk is left', async () => {
             const adapters = [fakeArr({ diagnosis: healthy, getFailedHealthChecks: async () => [check(1), check(2)], getDiskSpace: async () => [disk('/a', 1)] })];
             const text = await textOf(undefined, adapters, { detail: 'standard', limit: 2 });
-            expect(text.split('\n')[0]).toBe('All 1 configured service(s) healthy. 2 failing health check(s), 0 of 1 disk(s) shown.');
+            expect(text.split('\n')[0]).toBe('All 1 configured service(s) healthy. 2 failing health check(s), 0 of 1 mount(s) shown.');
             expect(text).not.toMatch(/^disk/m);
         });
 
@@ -127,7 +127,7 @@ describe('stack_health primary media server', () => {
             const adapters = [fakeArr({ diagnosis: healthy, getFailedHealthChecks: async () => [check(1), check(2), check(3)], getDiskSpace: async () => [disk('/a', 1)] })];
             const text = await textOf(undefined, adapters, { detail: 'minimal', limit: 50 });
             expect(text.split('\n')).toEqual([
-                'All 1 configured service(s) healthy. 0 of 3 failing health check(s) shown, 0 of 1 disk(s) shown.',
+                'All 1 configured service(s) healthy. 0 of 3 failing health check(s) shown, 0 of 1 mount(s) shown.',
                 'radarr — ok, 6 ms'
             ]);
         });

@@ -20,7 +20,10 @@ export function humanBytes(bytes: number | undefined): string {
 /** What a service reports about one mount; `services/types` DiskSpace has this shape. */
 type Mount = { service: string; freeSpace: number; totalSpace?: number | undefined; label?: string; path?: string };
 
-/** `mounts` names each mount the group was seen at, `radarr /config`, or the service alone when it gave no name. */
+/**
+ * One filesystem, and every instance that can see it. `mounts` names each
+ * mount it was seen at, `radarr /config`, or the service alone when it gave no name.
+ */
 export type DiskGroup = { freeSpace: number; totalSpace?: number | undefined; services: string[]; mounts: string[] };
 
 /**
@@ -68,8 +71,9 @@ function sameSize(a: number, b: number): boolean {
  * against a false merge and folds in the torrent clients, which report free
  * space with no total to contradict.
  *
- * Paths are dropped: which mount is `/storage` is a container-mapping
- * question, and this table answers whether anything is running out of room.
+ * Each group keeps the mounts it was seen at, by service and, where the
+ * caller kept them, label or path: the dashboard shows only the services, and
+ * stack_health's text names the paths at `detail: "full"`.
  */
 export function groupDisks(disks: readonly Mount[]): DiskGroup[] {
     const groups: DiskGroup[] = [];

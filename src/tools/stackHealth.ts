@@ -492,7 +492,7 @@ export function shownLine(result: Pick<StackHealthResult, 'failures' | 'disks'>)
         ...(failures.total === 0
             ? []
             : [failures.returned === failures.total ? `${failures.total} failing health check(s)` : `${failures.returned} of ${failures.total} failing health check(s) shown`]),
-        ...(disks.returned === disks.total ? [] : [`${disks.returned} of ${disks.total} disk(s) shown`])
+        ...(disks.returned === disks.total ? [] : [`${disks.returned} of ${disks.total} mount(s) shown`])
     ];
     return parts.length === 0 ? '' : ` ${parts.join(', ')}.`;
 }
